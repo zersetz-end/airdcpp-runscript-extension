@@ -13,6 +13,7 @@ module.exports = [
 				key: 'event',
 				title: 'Event/Hook',
 				type: 'string',
+				description: 'Event or hook the script should be executed for.',
 				optional: false,
 				default_value: EventTypes[0].id,
 				options: EventTypes

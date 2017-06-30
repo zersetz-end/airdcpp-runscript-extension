@@ -1,5 +1,5 @@
 const EventTypes = require('./EventTypes.js');
-module.exports =  EventType;
+module.exports = EventType;
 function EventType(eventId) {
     console.log(eventId);
     this.id = eventId;
@@ -16,5 +16,6 @@ const findName = function (id) {
             return type.name;
         }
     }
-}
+};
+
 
