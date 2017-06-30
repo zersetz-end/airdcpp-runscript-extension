@@ -30,6 +30,8 @@ The `execution` object itself contains:
 | **script** | string | The executed script.
 | **socket** | module | The [Api socket](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md)
 
+Additionaly hook subscriptions also have acces to the `accept` and `reject` functions as described [here](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md#addhook).
+
 ## Resources
 
 - [AirDC++ Web API reference](http://apidocs.airdcpp.net)
