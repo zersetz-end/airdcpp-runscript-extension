@@ -39,7 +39,7 @@ Execution.prototype.unregister = function () {
 
 const handleEvent = async function (execution, message) {
     try {
-        execution.logger.debug(`Executing: ${execution.event.name}[${execution.index}]`);
+        execution.logger.verbose(`Executing: ${execution.event.name}[${execution.index}]`);
         eval(execution.script);
     } catch (error) {
         handleError(execution, error);
@@ -48,7 +48,7 @@ const handleEvent = async function (execution, message) {
 
 const handleHook = async function (execution, message, accept, reject) {
     try {
-        execution.logger.debug(`Executing: ${execution.event.name}[${execution.index}]`);
+        execution.logger.verbose(`Executing: ${execution.event.name}[${execution.index}]`);
         eval(execution.script);
     } catch (error) {
         handleError(execution, error);
