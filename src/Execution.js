@@ -2,6 +2,7 @@
 
 const parameterPattern = /\$\{[a-zA-Z\.]*\}/;
 
+const vm = require('vm');
 const fs = require('fs');
 const child_process = require('child_process');
 
@@ -21,8 +22,10 @@ Execution.prototype.register = async function (socket) {
         this.logger = socket.logger;
         if (this.event.hook) {
             this.promise = await socket.addHook(this.event.source, this.event.event, handleHook.bind(this, this));
+            this.logger.info(`Registered: ${this.event.name}[${this.index}]`);
         } else {
             this.promise = await socket.addListener(this.event.source, this.event.event, handleEvent.bind(this, this));
+            this.logger.info(`Registered: ${this.event.name}[${this.index}]`);
         }
     }
 };
@@ -36,6 +39,7 @@ Execution.prototype.unregister = function () {
 
 const handleEvent = async function (execution, message) {
     try {
+        execution.logger.debug(`Executing: ${execution.event.name}[${execution.index}]`);
         eval(execution.script);
     } catch (error) {
         handleError(execution, error);
@@ -44,6 +48,7 @@ const handleEvent = async function (execution, message) {
 
 const handleHook = async function (execution, message, accept, reject) {
     try {
+        execution.logger.debug(`Executing: ${execution.event.name}[${execution.index}]`);
         eval(execution.script);
     } catch (error) {
         handleError(execution, error);
