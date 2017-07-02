@@ -14,6 +14,7 @@ function Execution(index, event, script) {
     this.script = script;
     this.promise = null;
     this.socket = null;
+    this._function = null;
 }
 
 Execution.prototype.register = async function (socket) {
@@ -21,9 +22,11 @@ Execution.prototype.register = async function (socket) {
         this.socket = socket;
         this.logger = socket.logger;
         if (this.event.hook) {
+            this._function = new Function('execution','fs','child_process','message','accept', 'reject',this.script);
             this.promise = await socket.addHook(this.event.source, this.event.event, handleHook.bind(this, this));
             this.logger.info(`Registered: ${this.event.name}[${this.index}]`);
         } else {
+            this._function = new Function('execution','fs','child_process','message',this.script);
             this.promise = await socket.addListener(this.event.source, this.event.event, handleEvent.bind(this, this));
             this.logger.info(`Registered: ${this.event.name}[${this.index}]`);
         }
@@ -40,7 +43,7 @@ Execution.prototype.unregister = function () {
 const handleEvent = async function (execution, message) {
     try {
         execution.logger.verbose(`Executing: ${execution.event.name}[${execution.index}]`);
-        eval(execution.script);
+        this._function(execution,  fs, child_process, message);
     } catch (error) {
         handleError(execution, error);
     }
@@ -49,7 +52,7 @@ const handleEvent = async function (execution, message) {
 const handleHook = async function (execution, message, accept, reject) {
     try {
         execution.logger.verbose(`Executing: ${execution.event.name}[${execution.index}]`);
-        eval(execution.script);
+        this._function(execution,  fs, child_process, message, accept, reject);
     } catch (error) {
         handleError(execution, error);
     }
