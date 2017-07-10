@@ -124,28 +124,12 @@ const types = [
         name: '/hubs/listeners/hub_removed'
     }
     , {
-        id: '/hubs/hooks/hub_incoming_message_hook',
-        name: '/hubs/hooks/hub_incoming_message_hook'
-    }
-    , {
-        id: '/hubs/hooks/hub_outgoing_message_hook',
-        name: '/hubs/hooks/hub_outgoing_message_hook'
-    }
-    , {
         id: '/private_chat/listeners/private_chat_created',
         name: '/private_chat/listeners/private_chat_created'
     }
     , {
         id: '/private_chat/listeners/private_chat_removed',
         name: '/private_chat/listeners/private_chat_removed'
-    }
-    , {
-        id: '/private_chat/hooks/private_chat_incoming_message_hook',
-        name: '/private_chat/hooks/private_chat_incoming_message_hook'
-    }
-    , {
-        id: '/private_chat/hooks/private_chat_outgoing_message_hook',
-        name: '/private_chat/hooks/private_chat_outgoing_message_hook'
     }
     , {
         id: '/queue/listeners/queue_bundle_added',
@@ -208,14 +192,6 @@ const types = [
         name: '/queue/listeners/queue_file_removed'
     }
     , {
-        id: '/queue/hooks/queue_file_finished_hook',
-        name: '/queue/hooks/queue_file_finished_hook'
-    }
-    , {
-        id: '/queue/hooks/queue_bundle_finished_hook',
-        name: '/queue/hooks/queue_bundle_finished_hook'
-    }
-    , {
         id: '/sessions/listeners/session_created',
         name: '/sessions/listeners/session_created'
     }
@@ -238,14 +214,6 @@ const types = [
     , {
         id: '/share/listeners/share_exclude_removed',
         name: '/share/listeners/share_exclude_removed'
-    }
-    , {
-        id: '/share/hooks/share_file_validation_hook',
-        name: '/share/hooks/share_file_validation_hook'
-    }
-    , {
-        id: '/share/hooks/share_directory_validation_hook',
-        name: '/share/hooks/share_directory_validation_hook'
     }
     , {
         id: '/share_profiles/listeners/share_profile_added',
@@ -353,4 +321,33 @@ const types = [
     }
 ].sort(compare);
 
-module.exports = types;
+const settings = [
+    {
+        key: 'path',
+        title: 'Path',
+        type: 'string',
+        description: 'Hook the script should be executed for.',
+        optional: false,
+        default_value: types[0].id,
+        options: types
+    }
+];
+
+const parameter = ['message'];
+
+const register = async(socket, config, callback)=>{
+    return await socket.addListener(config.path.split('/')[1], config.path.split('/')[3], callback);
+};
+
+const id = 'event';
+const name = 'Event';
+const description = 'Executes a script based on events.';
+
+export default {
+    settings,
+    parameter,
+    register,
+    id,
+    name,
+    description
+}

@@ -1,6 +1,6 @@
 {
   "name": "airdcpp-runscript-extension",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Execute shell script on airdcpp-api event/hook.",
   "license": "MIT",
   "author": {
@@ -32,11 +32,15 @@
     "babel-preset-env": "^1.5.2",
     "babel-preset-stage-1": "^6.5.0",
     "cross-env": "^5.0.0",
+    "node-cron": "^1.2.0",
     "nodemon": "^1.11.0",
     "rimraf": "^2.5.2",
     "source-map-support": "^0.4.14",
     "webpack": "^3.0.0"
   },
+  "bundledDependencies": [
+    "node-cron"
+  ],
   "main": "dist/main.js",
   "airdcpp": {
     "apiVersion": 1,

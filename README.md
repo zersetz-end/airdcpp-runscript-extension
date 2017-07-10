@@ -10,7 +10,7 @@ The configuration consists of Executions which pair an event or a hook with a sc
 
 ## Script execution
 
-At the moment scripts are executed though JavaScript's native eval()-function. Which is widely considered evil but also allows the most extensive use cases for the scripts without making changes to the extension itself. For convenience purposes the [Execution](src/Execution.js) object offers the following variables and node.js modules by default.
+Scripts are currently executed by wrapping them in a [Function](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Function) object.
 
 ## Variables
 
@@ -30,7 +30,7 @@ The `execution` object itself contains:
 | **script** | string | The executed script.
 | **socket** | module | The [Api socket](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md)
 
-Additionaly hook subscriptions also have acces to the `accept` and `reject` functions as described [here](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md#addhook).
+Additionaly hook subscriptions also have acces to the `accept` and `reject` functions as described [here](https://github.com/airdcpp-web/airdcpp-apidocs/blob/master/communication-protocols.md#action-hooks).
 
 ## Resources
 

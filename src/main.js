@@ -1,59 +1,141 @@
 'use strict';
 
-import Execution from './Execution';
-import EventType from './EventType';
-
-const settingsDefinition = require('./settings.js');
-
-const parameterPattern = /\$\{[a-zA-Z\.]*\}/;
-const CONFIG_VERSION = 1;
+const CONFIG_VERSION = 2;
 
 // Settings manager docs: https://github.com/airdcpp-web/airdcpp-extension-settings-js
 const SettingsManager = require('airdcpp-extension-settings');
 
-var executions = [];
+const fs = require('fs');
+const child_process = require('child_process');
+const domain = require('domain');
+import triggers from './triggers';
 
-function clearExecutions(socket) {
-	var execution;
-	for(execution of executions){
-		execution.unregister();
+var registered = [];
+
+const parameter = [
+	'execution'
+];
+
+const scriptSettings = [{
+	key: 'script',
+	title: 'Script',
+	type: 'text',
+	optional: false,
+	default_value: ""
+}];
+
+const settingsDef = triggers.map(function (type) {
+	return {
+		key: type.id,
+		title: type.name,
+		description: type.description,
+		type: 'list',
+		item_type: 'struct',
+		optional: true,
+		default_value: null,
+		definitions: type.settings.concat(scriptSettings)
+	};
+});
+
+function clearRegistered(socket) {
+	var item;
+	for (item of registered) {
+		item.domain.exit();
+		item.unregister();
+		item.execution.socket.logger.info(`Unregistered: ${item.execution.trigger.id}:${item.execution.index}`);
 	}
-	executions = [];
+	registered = [];
 }
 
-const updateExecutions = function (socket, extension, settings) {
-	clearExecutions(socket);
-	var executionConfigs = settings['executions'];
-	// Collecting unique event types
-	for (var i = 0;i< executionConfigs.length;i+=1) {
-		var execution = new Execution(i,new EventType(executionConfigs[i]['event']), executionConfigs[i]['script']);
-		execution.register(socket);
-		executions.push(execution);
-	}
+const updateRegistered = async function (socket, extension, settings) {
+	clearRegistered(socket);
+	triggers.map(async function (trigger) {
+		var triggerConfigs = settings[trigger.id];
+		if (triggerConfigs) {
+			var config;
+			var index = 0;
+			for (config of triggerConfigs) {
+				var functionParameter = parameter.concat(trigger.parameter);
+				var scriptFunction = new Function(functionParameter.join(), config.script);
+				var execution = {
+					socket,
+					index,
+					config,
+					child_process,
+					fs,
+					trigger
+				};
+				var d = domain.create();
+				d.on('error', handleError.bind(this, execution));
+				var callback = d.bind(scriptFunction.bind(this, execution));
+				try {
+					var item = {
+						execution: execution,
+						unregister: await trigger.register(socket, config, callback),
+						domain: d
+					};
+					registered.push(item);
+				} catch (error) {
+					handleError(execution, error);
+				}
+				index += 1;
+			}
+		}
+	});
+};
+
+const handleError = function (execution, error) {
+	var prefix = `[runscript:${execution.trigger.id}:${execution.index}]`;
+	execution.socket.logger.error(`${prefix}${error}`);
+	execution.socket.post('events', {
+		text: `${prefix}${error.stack}`,
+		severity: 'error'
+	});
 };
 
 // Entry point docs: https://github.com/airdcpp-web/airdcpp-extension-js#extension-entry-structure
 module.exports = function (socket, extension) {
-	const settings = SettingsManager(socket, {
+	const settingsManager = SettingsManager(socket, {
 		extensionName: extension.name,
 		configFile: extension.configPath + 'config.json',
 		configVersion: CONFIG_VERSION,
-		definitions: settingsDefinition
+		definitions: settingsDef
 	});
 
-	settings.onValuesUpdated = updateExecutions.bind(this, socket, extension);
+	settingsManager.onValuesUpdated = updateRegistered.bind(this, socket, extension);
 
-	const subscriberInfo = {
-		id: extension.name,
-		name: 'Runscript'
+	const migrateConfig = (loadedConfigVersion, loadedData) =>{
+		if(loadedConfigVersion < 2){
+			var config = {
+				"event": [],
+				"hook":[]
+			};
+			var exec;
+			for(exec of loadedData.executions){
+				var array;
+				if(exec.event.indexOf('hooks') > 0){
+					config.hook.push({
+						"path": exec.event,
+						"script": exec.script
+					});;
+				}else{
+					config.event.push({
+						"path": exec.event,
+						"script": exec.script
+					});;
+				}
+				array
+			}
+			return config;
+		}
 	};
 
 	extension.onStart = async (sessionInfo) => {
-		await settings.load();
+		await settingsManager.load(migrateConfig);
 	};
 
 	extension.onStop = () => {
-
+		clearRegistered(socket);
 	};
 
 };
