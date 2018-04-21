@@ -1,6 +1,6 @@
 {
   "name": "airdcpp-runscript-extension",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Execute shell script on airdcpp-api event/hook.",
   "license": "MIT",
   "author": {
