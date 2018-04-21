@@ -1,6 +1,6 @@
 'use strict';
 
-const CONFIG_VERSION = 2;
+const CONFIG_VERSION = 3;
 
 // Settings manager docs: https://github.com/airdcpp-web/airdcpp-extension-settings-js
 const SettingsManager = require('airdcpp-extension-settings');
@@ -55,8 +55,6 @@ const updateRegistered = async function (socket, extension, settings) {
 			var config;
 			for (config of triggerConfigs) {
 				var functionParameter = parameter.concat(trigger.parameter);
-				var script = fs.readFileSync(config.script);
-				var scriptFunction = new Function(functionParameter.join(), script);
 				var execution = {
 					socket,
 					config,
@@ -64,10 +62,13 @@ const updateRegistered = async function (socket, extension, settings) {
 					fs,
 					trigger
 				};
-				var d = domain.create();
-				d.on('error', handleError.bind(this, execution));
-				var callback = d.bind(scriptFunction.bind(this, execution));
-				try {
+				var script;
+				try{
+					script = fs.readFileSync(config.script,"UTF-8");
+					var scriptFunction = new Function(functionParameter.join(), script);
+					var d = domain.create();
+					d.on('error', handleError.bind(this, execution));
+					var callback = d.bind(scriptFunction.bind(this, execution));
 					var item = {
 						execution: execution,
 						unregister: await trigger.register(socket, config, callback),
@@ -125,6 +126,25 @@ module.exports = function (socket, extension) {
 				array
 			}
 			return config;
+		}else if(loadedConfigVersion < 3){
+			triggers.map((trigger) => {
+				var index = 0;
+				var triggerConfigs = loadedData[trigger.id];
+				if (triggerConfigs) {
+					var item;
+					for (item of triggerConfigs) {
+						var scriptFile = `${extension.configPath}${trigger.id}-${index}.js`;
+						fs.writeFileSync(scriptFile, item.script);
+						item.script = scriptFile;
+						socket.post('events', {
+							text: `Script ${trigger.id}-${index} saved to ${scriptFile}`,
+							severity: 'info'
+						});
+						index++;
+					}
+				}
+			});
+			return loadedData;
 		}
 	};
 
