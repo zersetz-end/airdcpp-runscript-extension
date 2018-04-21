@@ -19,7 +19,7 @@ const parameter = [
 const scriptSettings = [{
 	key: 'script',
 	title: 'Script',
-	type: 'text',
+	type: 'file_path',
 	optional: false,
 	default_value: ""
 }];
@@ -42,7 +42,7 @@ function clearRegistered(socket) {
 	for (item of registered) {
 		item.domain.exit();
 		item.unregister();
-		item.execution.socket.logger.info(`Unregistered: ${item.execution.trigger.id}:${item.execution.index}`);
+		item.execution.socket.logger.info(`Unregistered: ${item.execution.config.script}`);
 	}
 	registered = [];
 }
@@ -53,13 +53,12 @@ const updateRegistered = async function (socket, extension, settings) {
 		var triggerConfigs = settings[trigger.id];
 		if (triggerConfigs) {
 			var config;
-			var index = 0;
 			for (config of triggerConfigs) {
 				var functionParameter = parameter.concat(trigger.parameter);
-				var scriptFunction = new Function(functionParameter.join(), config.script);
+				var script = fs.readFileSync(config.script);
+				var scriptFunction = new Function(functionParameter.join(), script);
 				var execution = {
 					socket,
-					index,
 					config,
 					child_process,
 					fs,
@@ -78,14 +77,13 @@ const updateRegistered = async function (socket, extension, settings) {
 				} catch (error) {
 					handleError(execution, error);
 				}
-				index += 1;
 			}
 		}
 	});
 };
 
 const handleError = function (execution, error) {
-	var prefix = `[runscript:${execution.trigger.id}:${execution.index}]`;
+	var prefix = `[runscript:${execution.config.script}]`;
 	execution.socket.logger.error(`${prefix}${error}`);
 	execution.socket.post('events', {
 		text: `${prefix}${error.stack}`,
