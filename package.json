@@ -1,14 +1,15 @@
 {
   "name": "airdcpp-runscript-extension",
-  "version": "0.4.0",
-  "description": "Execute shell script on airdcpp-api event/hook.",
+  "version": "1.0.0",
+  "description": "Execute scripts on airdcpp-api events/hooks or cron schedule.",
   "license": "MIT",
   "author": {
     "name": "zersetz-end"
   },
   "keywords": [
     "airdcpp",
-    "airdcpp-extensions"
+    "airdcpp-extensions",
+    "airdcpp-extensions-public"
   ],
   "bugs": "https://github.com/zersetz-end/airdcpp-runscript-extension/issues/",
   "repository": {
@@ -32,14 +33,14 @@
     "babel-preset-env": "^1.5.2",
     "babel-preset-stage-1": "^6.5.0",
     "cross-env": "^5.0.0",
-    "node-cron": "^1.2.0",
+    "cron": "^1.3.0",
     "nodemon": "^1.11.0",
     "rimraf": "^2.5.2",
     "source-map-support": "^0.4.14",
     "webpack": "^3.0.0"
   },
   "bundledDependencies": [
-    "node-cron"
+    "cron"
   ],
   "main": "dist/main.js",
   "airdcpp": {

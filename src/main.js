@@ -6,14 +6,16 @@ const CONFIG_VERSION = 3;
 const SettingsManager = require('airdcpp-extension-settings');
 
 const fs = require('fs');
-const child_process = require('child_process');
+const Module = require('module');
 const domain = require('domain');
+
 import triggers from './triggers';
 
 var registered = [];
 
 const parameter = [
-	'execution'
+	'socket',
+	'require'
 ];
 
 const scriptSettings = [{
@@ -42,7 +44,7 @@ function clearRegistered(socket) {
 	for (item of registered) {
 		item.domain.exit();
 		item.unregister();
-		item.execution.socket.logger.info(`Unregistered: ${item.execution.config.script}`);
+		socket.logger.info(`Unregistered: ${JSON.stringify(item.config)}`);
 	}
 	registered = [];
 }
@@ -55,38 +57,33 @@ const updateRegistered = async function (socket, extension, settings) {
 			var config;
 			for (config of triggerConfigs) {
 				var functionParameter = parameter.concat(trigger.parameter);
-				var execution = {
-					socket,
-					config,
-					child_process,
-					fs,
-					trigger
-				};
 				var script;
 				try{
 					script = fs.readFileSync(config.script,"UTF-8");
 					var scriptFunction = new Function(functionParameter.join(), script);
 					var d = domain.create();
-					d.on('error', handleError.bind(this, execution));
-					var callback = d.bind(scriptFunction.bind(this, execution));
+					d.on('error', handleError.bind(this, socket, config));
+					var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
 					var item = {
-						execution: execution,
+						config: config,
+						socket: socket,
 						unregister: await trigger.register(socket, config, callback),
 						domain: d
 					};
 					registered.push(item);
+					socket.logger.info(`Registered: ${JSON.stringify(config)}`);
 				} catch (error) {
-					handleError(execution, error);
+					handleError(socket, config, error);
 				}
 			}
 		}
 	});
 };
 
-const handleError = function (execution, error) {
-	var prefix = `[runscript:${execution.config.script}]`;
-	execution.socket.logger.error(`${prefix}${error}`);
-	execution.socket.post('events', {
+const handleError = function (socket, config, error) {
+	var prefix = `[runscript:${config.script}]`;
+	socket.logger.error(`${prefix}${error}`);
+	socket.post('events', {
 		text: `${prefix}${error.stack}`,
 		severity: 'error'
 	});

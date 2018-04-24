@@ -9,14 +9,14 @@ const settings = [
     }
 ];
 
-const cron = require('node-cron');
+const CronJob = require('cron').CronJob;
 
 const parameter = [];
 
 const register = async(socket, config, callback)=>{
-    var task = cron.schedule(config['cron'], callback);
+    var task = new CronJob(config['cron'],callback,null,true,null);
     return function(){
-        task.destroy();
+        task.stop();
     }
 };
 
