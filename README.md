@@ -10,7 +10,7 @@ The configuration consists 3 sections for events, hooks and schedules. Execution
 
 ## Script execution
 
-Scripts are currently executed by wrapping them in a [Function](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Function) object.
+Scripts are currently executed by wrapping them in a [AsyncFunction](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/AsyncFunction) object.
 
 ## Parameter
 

@@ -8,6 +8,7 @@ const SettingsManager = require('airdcpp-extension-settings');
 const fs = require('fs');
 const Module = require('module');
 const domain = require('domain');
+const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 
 import triggers from './triggers';
 
@@ -60,7 +61,7 @@ const updateRegistered = async function (socket, extension, settings) {
 				var script;
 				try{
 					script = fs.readFileSync(config.script,"UTF-8");
-					var scriptFunction = new Function(functionParameter.join(), script);
+					var scriptFunction = new AsyncFunction(functionParameter.join(), script);
 					var d = domain.create();
 					d.on('error', handleError.bind(this, socket, config));
 					var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
