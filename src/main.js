@@ -9,8 +9,7 @@ const fs = require('fs');
 const Module = require('module');
 const domain = require('domain');
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
-
-import triggers from './triggers';
+const triggers = require('./triggers').default
 
 var registered = [];
 
