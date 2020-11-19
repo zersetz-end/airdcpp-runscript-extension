@@ -26,3 +26,9 @@ Scripts are currently executed by wrapping them in a [AsyncFunction](https://dev
 ## Resources
 
 - [AirDC++ Web API reference](http://apidocs.airdcpp.net)
+
+[build-badge]: https://img.shields.io/travis/zersetz-end/airdcpp-runscript-extension/master.svg?style=flat-square
+[build]: https://travis-ci.com/zersetz-end/airdcpp-runscript-extension
+
+[npm-badge]: https://img.shields.io/npm/v/airdcpp-runscript-extension.svg?style=flat-square
+[npm]: https://www.npmjs.com/package/airdcpp-runscript-extension
