@@ -20,6 +20,7 @@ jobs:
   include:
     - stage: deploy to npmjs
       node_js: 10
+      script: npm install
       deploy:
         provider: npm
         email: $NPM_PUBLISH_USER
