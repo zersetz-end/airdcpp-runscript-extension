@@ -39,21 +39,23 @@ const settingsDef = triggers.map(function (type) {
 	};
 });
 
-function clearRegistered(socket) {
+function clearRegistered(socket, triggerId) {
 	var item;
 	for (item of registered) {
-		item.domain.exit();
-		item.unregister();
-		socket.logger.info(`Unregistered: ${JSON.stringify(item.config)}`);
+		if(item.triggerId == triggerId){
+			item.domain.exit();
+			item.unregister();
+			socket.logger.info(`Unregistered: ${JSON.stringify(item.config)}`);
+		}
 	}
 	registered = [];
 }
 
 const updateRegistered = async function (socket, extension, settings) {
-	clearRegistered(socket);
 	triggers.map(async function (trigger) {
 		var triggerConfigs = settings[trigger.id];
 		if (triggerConfigs) {
+			clearRegistered(socket, trigger.id);
 			var config;
 			for (config of triggerConfigs) {
 				var functionParameter = parameter.concat(trigger.parameter);
@@ -65,6 +67,7 @@ const updateRegistered = async function (socket, extension, settings) {
 					d.on('error', handleError.bind(this, socket, config));
 					var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
 					var item = {
+						triggerId: trigger.id,
 						config: config,
 						socket: socket,
 						unregister: await trigger.register(socket, config, callback),
