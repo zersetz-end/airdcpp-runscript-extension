@@ -1,4 +1,4 @@
-# airdcpp-runscript-extension
+# airdcpp-runscript-extension [![Travis][build-badge]][build] [![npm package][npm-badge]][npm]
 
 Extension to execute scripts (JavaScript) on certain events/hooks provided by the [AirDC++ Web Client](https://github.com/airdcpp-web/airdcpp-webclient) or controlled by [cron](https://www.npmjs.com/package/node-cron) statement.
 
