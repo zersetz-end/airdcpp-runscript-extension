@@ -4,7 +4,7 @@ Extension to execute scripts (JavaScript) on certain events/hooks provided by th
 
 ## Configuration
 
-The configuration consists 3 sections for events, hooks and schedules. Executions for the same event/hook are executed asynchronously, so the scripts should never build on one another.
+The configuration consists of 3 sections for events, hooks and schedules. Executions for the same event/hook are executed asynchronously, so the scripts should never build on one another.
 
 ![Settings](doc/settings_screen.png?raw=true "Settings")
 
@@ -14,6 +14,8 @@ Scripts are currently executed by wrapping them in a [AsyncFunction](https://dev
 
 ## Parameter
 
+The following parameters are defined:
+
 | Name | Type | Description
 | :--- | :--- | :--- |
 | **socket** | object | The [Api socket](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md)
@@ -22,6 +24,21 @@ Scripts are currently executed by wrapping them in a [AsyncFunction](https://dev
 | **accept** | function | (Hook only) Function to accept the validation ([documentation](https://github.com/airdcpp-web/airdcpp-apidocs/blob/master/communication-protocols.md#action-hooks))
 | **reject** | function | (Hook only) Function to reject the validation ([documentation](https://github.com/airdcpp-web/airdcpp-apidocs/blob/master/communication-protocols.md#action-hooks))
 
+Resulting method signatures for each execution type:
+
+```javascript
+async cron(socket, require){
+    // your script code
+}
+
+async event(socket, require, message){
+    // your script code
+}
+
+async hook(socket, require, message, accept, reject){
+    // your script code
+}
+```
 
 ## Resources
 
