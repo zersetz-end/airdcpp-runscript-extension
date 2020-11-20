@@ -10,6 +10,7 @@ const Module = require('module');
 const domain = require('domain');
 const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
 const triggers = require('./triggers').default
+const _ = require('underscore');
 
 var registered = [];
 
@@ -39,46 +40,68 @@ const settingsDef = triggers.map(function (type) {
 	};
 });
 
-function clearRegistered(socket, triggerId) {
-	var item;
-	for (item of registered) {
-		if(item.triggerId == triggerId){
-			item.domain.exit();
-			item.unregister();
-			socket.logger.info(`Unregistered: ${JSON.stringify(item.config)}`);
+function unregister(item){
+	try{
+		item.domain.exit();
+		item.unregister();
+		var index = registered.indexOf(item);
+		if(index > -1){
+			registered.splice(index, 1);
 		}
+		item.socket.post('events',
+		{
+			text: `Unregistered: ${JSON.stringify(item.config)}`,
+			severity: 'info'
+		});
+	} catch (error) {
+		item.socket.logger.error(`Failed to unregister: ${JSON.stringify(item.config)} Error: ${error}`);
+		item.socket.post('events',
+		{
+			text: `Failed to unregister: ${JSON.stringify(item.config)} Error: ${error.message}`,
+			severity: 'warn'
+		});
 	}
-	registered = [];
-}
+}; 
+
+const register = async function(socket, trigger, config){
+	try{
+		var functionParameter = parameter.concat(trigger.parameter);
+		var script = fs.readFileSync(config.script,"UTF-8");
+		var scriptFunction = new AsyncFunction(functionParameter.join(), script);
+		var d = domain.create();
+		d.on('error', handleError.bind(this, socket, config));
+		var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
+		var item = {
+			triggerId: trigger.id,
+			config: config,
+			socket: socket,
+			unregister: await trigger.register(socket, config, callback),
+			domain: d
+		};
+		registered.push(item);
+		socket.post('events',
+		{
+			text: `Registered: ${JSON.stringify(config)}`,
+			severity: 'info'
+		});
+	} catch (error) {
+		socket.logger.error(`Failed to register: ${JSON.stringify(config)} Error: ${error}`);
+		socket.post('events',
+		{
+			text: `Failed to register: ${JSON.stringify(config)} Error: ${error.message}`,
+			severity: 'warn'
+		});
+	}
+};
 
 const updateRegistered = async function (socket, extension, settings) {
 	triggers.map(async function (trigger) {
 		var triggerConfigs = settings[trigger.id];
 		if (triggerConfigs) {
-			clearRegistered(socket, trigger.id);
-			var config;
-			for (config of triggerConfigs) {
-				var functionParameter = parameter.concat(trigger.parameter);
-				var script;
-				try{
-					script = fs.readFileSync(config.script,"UTF-8");
-					var scriptFunction = new AsyncFunction(functionParameter.join(), script);
-					var d = domain.create();
-					d.on('error', handleError.bind(this, socket, config));
-					var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
-					var item = {
-						triggerId: trigger.id,
-						config: config,
-						socket: socket,
-						unregister: await trigger.register(socket, config, callback),
-						domain: d
-					};
-					registered.push(item);
-					socket.logger.info(`Registered: ${JSON.stringify(config)}`);
-				} catch (error) {
-					handleError(socket, config, error);
-				}
-			}
+			registered.filter(item => item.triggerId == trigger.id && triggerConfigs.filter(config => _.isEqual(item.config, config)).length == 0)
+					.forEach(item => unregister(item));
+			triggerConfigs.filter(config => registered.filter(item => item.triggerId == trigger.id && _.isEqual(item.config, config)).length == 0)
+					.forEach(config => register(socket, trigger, config));
 		}
 	});
 };
@@ -153,7 +176,7 @@ module.exports = function (socket, extension) {
 	};
 
 	extension.onStop = () => {
-		clearRegistered(socket);
+		registered.forEach(item => unregister(item));
 	};
 
 };
