@@ -18,8 +18,8 @@ jobs:
   include:
     - stage: deploy to npmjs
       node_js: 10
-      script: npm install
       deploy:
+        skip_cleanup: true
         provider: npm
         email: $NPM_PUBLISH_USER
         api_key: $NPM_PUBLISH_TOKEN
