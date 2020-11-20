@@ -20,7 +20,7 @@
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
     "clean": "rimraf dist",
     "start": "node devtools/watch.js ../dist/main.js",
-    "prepublish": "npm install",
+    "prepublish": "npm run build",
     "webpack": "webpack"
   },
   "devDependencies": {
