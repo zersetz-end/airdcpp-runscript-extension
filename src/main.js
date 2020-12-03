@@ -16,7 +16,8 @@ var registered = [];
 
 const parameter = [
 	'socket',
-	'require'
+	'require',
+	'extension'
 ];
 
 const scriptSettings = [{
@@ -63,14 +64,14 @@ function unregister(item){
 	}
 }; 
 
-const register = async function(socket, trigger, config){
+const register = async function(socket, trigger, config, extension){
 	try{
 		var functionParameter = parameter.concat(trigger.parameter);
 		var script = fs.readFileSync(config.script,"UTF-8");
 		var scriptFunction = new AsyncFunction(functionParameter.join(), script);
 		var d = domain.create();
 		d.on('error', handleError.bind(this, socket, config));
-		var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require));
+		var callback = d.bind(scriptFunction.bind(this, socket, Module.prototype.require, extension));
 		var item = {
 			triggerId: trigger.id,
 			config: config,
@@ -101,7 +102,7 @@ const updateRegistered = async function (socket, extension, settings) {
 			registered.filter(item => item.triggerId == trigger.id && triggerConfigs.filter(config => _.isEqual(item.config, config)).length == 0)
 					.forEach(item => unregister(item));
 			triggerConfigs.filter(config => registered.filter(item => item.triggerId == trigger.id && _.isEqual(item.config, config)).length == 0)
-					.forEach(config => register(socket, trigger, config));
+					.forEach(config => register(socket, trigger, config, extension));
 		}
 	});
 };

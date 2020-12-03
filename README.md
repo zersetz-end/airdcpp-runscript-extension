@@ -20,6 +20,7 @@ The following parameters are defined:
 | :--- | :--- | :--- |
 | **socket** | object | The [Api socket](https://github.com/airdcpp-web/airdcpp-apisocket-js/blob/master/GUIDE.md)
 | **require** | function | Module.require(id) function to load additional modules in the script
+| **extension** | object | The [Extension entry structure](https://github.com/airdcpp-web/airdcpp-extension-js#extension-entry-structure)
 | **message** | object | (Hook and event only) Received message
 | **accept** | function | (Hook only) Function to accept the validation ([documentation](https://github.com/airdcpp-web/airdcpp-apidocs/blob/master/communication-protocols.md#action-hooks))
 | **reject** | function | (Hook only) Function to reject the validation ([documentation](https://github.com/airdcpp-web/airdcpp-apidocs/blob/master/communication-protocols.md#action-hooks))
@@ -27,15 +28,15 @@ The following parameters are defined:
 Resulting method signatures for each execution type:
 
 ```javascript
-async cron(socket, require){
+async cron(socket, require, extension){
     // your script code
 }
 
-async event(socket, require, message){
+async event(socket, require, extension, message){
     // your script code
 }
 
-async hook(socket, require, message, accept, reject){
+async hook(socket, require, extension, message, accept, reject){
     // your script code
 }
 ```
