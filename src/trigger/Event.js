@@ -192,6 +192,18 @@ const types = [
         name: '/queue/listeners/queue_file_removed'
     }
     , {
+        id: '/search/listeners/search_instance_created',
+        name: '/search/listeners/search_instance_created'
+    }
+    , {
+        id: '/search/listeners/search_instance_removed',
+        name: '/search/listeners/search_instance_removed'
+    }
+    , {
+        id: '/search/listeners/search_types_updated',
+        name: '/search/listeners/search_types_updated'
+    }
+    , {
         id: '/sessions/listeners/session_created',
         name: '/sessions/listeners/session_created'
     }
@@ -202,6 +214,10 @@ const types = [
     , {
         id: '/share/listeners/share_refresh_queued',
         name: '/share/listeners/share_refresh_queued'
+    }
+    , {
+        id: '/share/listeners/share_refresh_started',
+        name: '/share/listeners/share_refresh_started'
     }
     , {
         id: '/share/listeners/share_refresh_completed',

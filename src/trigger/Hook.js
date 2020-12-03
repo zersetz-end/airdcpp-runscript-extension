@@ -23,13 +23,29 @@ const types = [
         id: '/private_chat/hooks/private_chat_outgoing_message_hook',
         name: '/private_chat/hooks/private_chat_outgoing_message_hook'
     }
-    ,  {
+    , {
         id: '/queue/hooks/queue_file_finished_hook',
         name: '/queue/hooks/queue_file_finished_hook'
     }
     , {
         id: '/queue/hooks/queue_bundle_finished_hook',
         name: '/queue/hooks/queue_bundle_finished_hook'
+    }
+    , {
+        id: '/share/hooks/share_file_validation_hook',
+        name: '/share/hooks/share_file_validation_hook'
+    }
+    , {
+        id: '/share/hooks/share_directory_validation_hook',
+        name: '/share/hooks/share_directory_validation_hook'
+    }
+    , {
+        id: '/share/hooks/new_share_file_validation_hook',
+        name: '/share/hooks/new_share_file_validation_hook'
+    }
+    , {
+        id: '/share/hooks/new_share_directory_validation_hook',
+        name: '/share/hooks/new_share_directory_validation_hook'
     }
 ].sort(compare);
 
