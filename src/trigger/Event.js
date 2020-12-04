@@ -334,6 +334,73 @@ const types = [
     , {
         id: '/view_files/listeners/view_file_removed',
         name: '/view_files/listeners/view_file_removed'
+    }, {
+        id: '/hubs/listeners/hub_updated',
+        name: '/hubs/listeners/hub_updated'
+    }
+    , {
+        id: '/hubs/listeners/hub_counts_updated',
+        name: '/hubs/listeners/hub_counts_updated'
+    }
+    , {
+        id: '/hubs/listeners/hub_message',
+        name: '/hubs/listeners/hub_message'
+    }
+    , {
+        id: '/hubs/listeners/hub_status',
+        name: '/hubs/listeners/hub_status'
+    }
+    , {
+        id: '/hubs/listeners/hub_user_connected',
+        name: '/hubs/listeners/hub_user_connected'
+    }
+    , {
+        id: '/hubs/listeners/hub_user_updated',
+        name: '/hubs/listeners/hub_user_updated'
+    }
+    , {
+        id: '/hubs/listeners/hub_user_disconnected',
+        name: '/hubs/listeners/hub_user_disconnected'
+    }
+    , {
+        id: '/hubs/listeners/hub_text_command',
+        name: '/hubs/listeners/hub_text_command'
+    }
+    , {
+        id: '/private_chat/listeners/private_chat_updated',
+        name: '/private_chat/listeners/private_chat_updated'
+    }
+    , {
+        id: '/private_chat/listeners/private_chat_message',
+        name: '/private_chat/listeners/private_chat_message'
+    }
+    , {
+        id: '/private_chat/listeners/private_chat_status',
+        name: '/private_chat/listeners/private_chat_status'
+    }
+    , {
+        id: '/hubs/listeners/private_chat_text_command',
+        name: '/hubs/listeners/private_chat_text_command'
+    }
+    , {
+        id: '/search/listeners/search_hub_searches_queued',
+        name: '/search/listeners/search_hub_searches_queued'
+    }
+    , {
+        id: '/search/listeners/search_hub_searches_sent',
+        name: '/search/listeners/search_hub_searches_sent'
+    }
+    , {
+        id: '/search/listeners/search_result_added',
+        name: '/search/listeners/search_result_added'
+    }
+    , {
+        id: '/search/listeners/search_result_updated',
+        name: '/search/listeners/search_result_updated'
+    }
+    , {
+        id: '/search/listeners/search_user_result',
+        name: '/search/listeners/search_user_result'
     }
 ].sort(compare);
 
