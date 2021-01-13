@@ -59,7 +59,7 @@ function unregister(item){
 		item.socket.post('events',
 		{
 			text: `Failed to unregister: ${JSON.stringify(item.config)} Error: ${error.message}`,
-			severity: 'warn'
+			severity: 'warning'
 		});
 	}
 }; 
@@ -90,7 +90,7 @@ const register = async function(socket, trigger, config, extension){
 		socket.post('events',
 		{
 			text: `Failed to register: ${JSON.stringify(config)} Error: ${error.message}`,
-			severity: 'warn'
+			severity: 'warning'
 		});
 	}
 };
