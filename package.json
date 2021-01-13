@@ -1,6 +1,6 @@
 {
   "name": "airdcpp-runscript-extension",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Execute scripts on airdcpp-api events/hooks or cron schedule.",
   "license": "MIT",
   "author": {
