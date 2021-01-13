@@ -64,7 +64,7 @@ const settings = [
 const parameter = ['message', 'accept', 'reject'];
 
 const register = async(socket, config, callback)=>{
-    return await socket.addHook(config.path.split('/')[1], config.path.split('/')[3], scriptFunction);
+    return await socket.addHook(config.path.split('/')[1], config.path.split('/')[3], callback);
 };
 
 const id = 'hook';
