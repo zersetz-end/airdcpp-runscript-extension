@@ -64,7 +64,14 @@ const settings = [
 const parameter = ['message', 'accept', 'reject'];
 
 const register = async(socket, config, callback)=>{
-    return await socket.addHook(config.path.split('/')[1], config.path.split('/')[3], callback);
+		const pathParts = config.path.split('/');
+		const api = pathParts[1];
+		const hook = pathParts[3];
+		const subscriberInfo = {
+			id: `runscript-${api}-${hook}`,
+			name: `runscript-${api}-${hook}`
+		};
+    return await socket.addHook(api, hook, callback, subscriberInfo);
 };
 
 const id = 'hook';
