@@ -55,7 +55,7 @@ function unregister(item){
 			severity: 'info'
 		});
 	} catch (error) {
-		item.socket.logger.error(`Failed to unregister: ${JSON.stringify(item.config)} Error: ${error}`);
+		item.socket.logger.error(`Failed to unregister: ${JSON.stringify(item.config)} Error: ${JSON.stringify(error)}`);
 		item.socket.post('events',
 		{
 			text: `Failed to unregister: ${JSON.stringify(item.config)} Error: ${error.message}`,
@@ -86,7 +86,7 @@ const register = async function(socket, trigger, config, extension){
 			severity: 'info'
 		});
 	} catch (error) {
-		socket.logger.error(`Failed to register: ${JSON.stringify(config)} Error: ${error}`);
+		socket.logger.error(`Failed to register: ${JSON.stringify(config)} Error: ${JSON.stringify(error)}`);
 		socket.post('events',
 		{
 			text: `Failed to register: ${JSON.stringify(config)} Error: ${error.message}`,
