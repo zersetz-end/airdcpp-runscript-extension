@@ -36,6 +36,18 @@ const types = [
         name: '/share/hooks/share_file_validation_hook'
     }
     , {
+        id: '/queue/hooks/queue_add_source_hook',
+        name: '/queue/hooks/queue_add_source_hook'
+    }
+    , {
+        id: '/queue/hooks/queue_add_bundle_hook',
+        name: '/queue/hooks/queue_add_bundle_hook'
+    }
+    , {
+        id: '/queue/hooks/queue_add_bundle_file_hook',
+        name: '/queue/hooks/queue_add_bundle_file_hook'
+    }
+    , {
         id: '/share/hooks/share_directory_validation_hook',
         name: '/share/hooks/share_directory_validation_hook'
     }
